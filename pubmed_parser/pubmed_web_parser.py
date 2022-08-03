@@ -89,9 +89,9 @@ def parse_pubmed_web_tree(tree):
         date_element = None
     if date_element is not None:
         year = date_element.find("year").text
-        month = date_element.find("month").text
-        day = date_element.find("day").text
-        date = f"{day}{month}{year}"
+        month = date_element.find("month").text.zfill(2)
+        day = date_element.find("day").text.zfill(2)
+        date = f"{day}.{month}.{year}"
     else:
         date = ""
 
