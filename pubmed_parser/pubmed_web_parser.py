@@ -81,12 +81,19 @@ def parse_pubmed_web_tree(tree):
     pubdatebook = tree.xpath(
         '//pubmedbookdata//history//pubmedpubdate[@pubstatus="medline"]'
     )
-    if len(pubdate) >= 1 and pubdate[0].find("year") is not None:
-        year = pubdate[0].find("year").text
-    elif len(pubdatebook) >= 1 and pubdatebook[0].find("year") is not None:
-        year = pubdatebook[0].find("year").text
+    if len(pubdate) and pubdate[0].find("day") is not None:
+        date_element = pubdate[0]
+    elif len(pubdatebook) and pubdatebook[0].find("day") is not None:
+        date_element = pubdatebook[0]
     else:
-        year = ""
+        date_element = None
+    if date_element is not None:
+        year = date_element.find("year").text
+        month = date_element.find("month").text
+        day = date_element.find("day").text
+        date = f"{day}{month}{year}"
+    else:
+        date = ""
 
     affiliations = list()
     if tree.xpath("//affiliationinfo/affiliation") is not None:
@@ -145,7 +152,7 @@ def parse_pubmed_web_tree(tree):
         "keywords": keywords,
         "doi": doi,
         "pmid": pmid,
-        "year": year,
+        "date": date,
     }
     return dict_out
 
