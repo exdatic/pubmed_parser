@@ -146,9 +146,9 @@ def parse_pubmed_web_tree(tree):
     dict_out = {
         "title": title,
         "abstract": abstract,
-        "journal": journal,
-        "affiliation": affiliations_text,
-        "authors": authors_text,
+        "journal": [j.strip() for j in journal.split(';')],
+        "affiliation": [a.strip() for a in affiliations_text.split(';')],
+        "authors": [a.strip() for a in authors_text.split(';')],
         "keywords": keywords,
         "doi": doi,
         "pmid": pmid,
