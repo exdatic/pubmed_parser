@@ -141,17 +141,17 @@ def parse_pubmed_web_tree(tree):
 
     pmid = tree.xpath("//pmid")[0].text
     doi_list = tree.xpath("//pubmeddata//articleidlist//articleid[@idtype='doi']")
-    doi = doi_list[0].text if doi_list else None
+    doi = doi_list[0].text.strip() if doi_list else None
 
     dict_out = {
-        "title": title,
-        "abstract": abstract,
+        "title": title.strip(),
+        "abstract": abstract.strip(),
         "journal": [j.strip() for j in journal.split(';')],
         "affiliation": [a.strip() for a in affiliations_text.split(';')],
         "authors": [a.strip() for a in authors_text.split(';')],
         "keywords": keywords,
         "doi": doi,
-        "pmid": pmid,
+        "pmid": pmid.strip(),
         "date": date,
     }
     return dict_out
