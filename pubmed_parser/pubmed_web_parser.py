@@ -73,9 +73,9 @@ def parse_pubmed_web_tree(tree):
     abstract = " ".join([stringify_children(a).strip() for a in abstract_tree])
 
     if len(tree.xpath("//article//title")) != 0:
-        journal = ";".join([t.text.strip() for t in tree.xpath("//article//title")])
+        journal = [t.text.strip() for t in tree.xpath("//article//title")]
     else:
-        journal = ""
+        journal = []
 
     pubdate = tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]')
     pubdatebook = tree.xpath(
@@ -95,14 +95,10 @@ def parse_pubmed_web_tree(tree):
     else:
         date = ""
 
-    affiliations = list()
-    if tree.xpath("//affiliationinfo/affiliation") is not None:
-        for affil in tree.xpath("//affiliationinfo/affiliation"):
-            affiliations.append(affil.text)
-    affiliations_text = "; ".join(affiliations)
-
     authors_tree = tree.xpath("//authorlist/author")
     authors = list()
+    affiliations = list()
+    orcid_ids = list()
     if authors_tree is not None:
         for a in authors_tree:
             firstname = (
@@ -116,10 +112,14 @@ def parse_pubmed_web_tree(tree):
                     if a.find("collectivename") is not None
                     else ""
                 )
-            authors.append(fullname)
-        authors_text = "; ".join(authors)
-    else:
-        authors_text = ""
+            authors.append(fullname.strip())
+            author_affils = [affil.text.strip() for affil in a.findall(".//affiliationinfo/affiliation")]
+            affiliations.append(author_affils)
+            orcid_elem = a.find(".//identifier[@source='ORCID']")
+            orcid_id = ""
+            if orcid_elem is not None:
+              orcid_id = orcid_elem.text.strip()
+            orcid_ids.append(orcid_id)
 
     keywords = ""
     keywords_mesh = tree.xpath("//meshheadinglist//meshheading")
@@ -146,9 +146,10 @@ def parse_pubmed_web_tree(tree):
     dict_out = {
         "title": title.strip(),
         "abstract": abstract.strip(),
-        "journal": [j.strip() for j in journal.split(';')],
-        "affiliation": [a.strip() for a in affiliations_text.split(';')],
-        "authors": [a.strip() for a in authors_text.split(';')],
+        "journal": journal,
+        "affiliations": affiliations,
+        "authors": authors,
+        "orcid_ids": orcid_ids,
         "keywords": keywords,
         "doi": doi,
         "pmid": pmid.strip(),
