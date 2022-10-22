@@ -119,6 +119,8 @@ def parse_pubmed_web_tree(tree):
             orcid_id = ""
             if orcid_elem is not None:
               orcid_id = orcid_elem.text.strip()
+              if not orcid_id.startswith('http://orcid.org/'):
+                orcid_id = 'http://orcid.org/' + orcid_id
             orcid_ids.append(orcid_id)
 
     keywords = ""
