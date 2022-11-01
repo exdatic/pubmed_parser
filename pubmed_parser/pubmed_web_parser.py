@@ -63,9 +63,9 @@ def parse_pubmed_web_tree(tree):
         'doi', 'year' 
     """
     if len(tree.xpath("//articletitle")) != 0:
-        title = " ".join([title.text if title.text else "" for title in tree.xpath("//articletitle")])
+        title = tree.spath("string(//articletitle)")
     elif len(tree.xpath("//booktitle")) != 0:
-        title = " ".join([title.text if title.text else "" for title in tree.xpath("//booktitle")])
+        title = tree.spath("string(//booktitle)")
     else:
         title = ""
 
