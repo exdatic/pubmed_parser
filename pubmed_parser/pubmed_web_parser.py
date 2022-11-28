@@ -93,7 +93,7 @@ def parse_pubmed_web_tree(tree):
         day = date_element.find("day").text.zfill(2)
         date = f"{day}.{month}.{year}"
     else:
-        date = ""
+        date = None
 
     authors_tree = tree.xpath("//authorlist/author")
     authors = list()
