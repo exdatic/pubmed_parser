@@ -67,7 +67,7 @@ def parse_pubmed_web_tree(tree):
     elif len(tree.xpath("//booktitle")) != 0:
         title = tree.xpath("string(//booktitle)")
     else:
-        title = ""
+        title = None
 
     abstract_tree = tree.xpath("//abstract/abstracttext")
     abstract = " ".join([stringify_children(a).strip() for a in abstract_tree])
@@ -110,20 +110,20 @@ def parse_pubmed_web_tree(tree):
                 fullname = (
                     a.find("collectivename").text
                     if a.find("collectivename") is not None
-                    else ""
+                    else None
                 )
-            authors.append(fullname.strip())
+            if fullname:
+                authors.append(fullname.strip())
             author_affils = [affil.text.strip() for affil in a.findall(".//affiliationinfo/affiliation")]
             affiliations.append(author_affils)
             orcid_elem = a.find(".//identifier[@source='ORCID']")
-            orcid_id = ""
             if orcid_elem is not None:
-              orcid_id = orcid_elem.text.strip()
-              if not 'orcid.org' in orcid_id:
-                orcid_id = 'http://orcid.org/' + orcid_id
-            orcid_ids.append(orcid_id)
+                orcid_id = orcid_elem.text.strip()
+                if not 'orcid.org' in orcid_id:
+                    orcid_id = 'http://orcid.org/' + orcid_id
+                orcid_ids.append(orcid_id)
 
-    keywords = ""
+    keywords = None
     keywords_mesh = tree.xpath("//meshheadinglist//meshheading")
     keywords_book = tree.xpath("//keywordlist//keyword")
     if len(keywords_mesh) > 0:
@@ -139,14 +139,14 @@ def parse_pubmed_web_tree(tree):
     elif len(keywords_book) > 0:
         keywords = ";".join([m.text or "" for m in keywords_book])
     else:
-        keywords = ""
+        keywords = None
 
     pmid = tree.xpath("//pmid")[0].text
     doi_list = tree.xpath("//pubmeddata//articleidlist//articleid[@idtype='doi']")
     doi = doi_list[0].text.strip() if doi_list else None
 
     dict_out = {
-        "title": title.strip(),
+        "title": title.strip() if title else None,
         "abstract": abstract.strip(),
         "journal": journal,
         "affiliations": affiliations,
