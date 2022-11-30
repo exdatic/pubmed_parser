@@ -120,7 +120,9 @@ def parse_pubmed_web_tree(tree):
             if orcid_elem is not None:
                 orcid_id = orcid_elem.text.strip()
                 if not 'orcid.org' in orcid_id:
-                    orcid_id = 'http://orcid.org/' + orcid_id
+                    orcid_id = 'https://orcid.org/' + orcid_id
+                if orcid_id.startswith('http://'):
+                    orcid_id = 'https://' + orcid_id[len('http://'):]
                 orcid_ids.append(orcid_id)
 
     keywords = None
