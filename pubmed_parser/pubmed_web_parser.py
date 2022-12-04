@@ -117,13 +117,14 @@ def parse_pubmed_web_tree(tree):
             author_affils = [affil.text.strip() for affil in a.findall(".//affiliationinfo/affiliation")]
             affiliations.append(author_affils)
             orcid_elem = a.find(".//identifier[@source='ORCID']")
+            orcid_id = None
             if orcid_elem is not None:
                 orcid_id = orcid_elem.text.strip()
                 if not 'orcid.org' in orcid_id:
                     orcid_id = 'https://orcid.org/' + orcid_id
                 if orcid_id.startswith('http://'):
                     orcid_id = 'https://' + orcid_id[len('http://'):]
-                orcid_ids.append(orcid_id)
+            orcid_ids.append(orcid_id)
 
     keywords = None
     keywords_mesh = tree.xpath("//meshheadinglist//meshheading")
